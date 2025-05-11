@@ -1,0 +1,30 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+env/
+ENV/
+venv/
+pip-wheel-metadata/
+
+# SQLite database
+instance/
+*.db
+
+# Flask instance folder
+instance/
+
+# VS Code settings
+.vscode/
+
+# Environment variables
+.env
+
+# Mac system files
+.DS_Store
+
+# Migrations
+migrations/
