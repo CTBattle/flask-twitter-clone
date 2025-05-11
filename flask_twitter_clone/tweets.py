@@ -1,14 +1,23 @@
 from flask import Blueprint, request, jsonify
+from .models import db, Tweet, Like, User
 from datetime import datetime
 from sqlalchemy import func
-from flask_twitter_clone.models import db, Tweet, Like, User
 
 bp = Blueprint("tweets", __name__)
 
 @bp.route("/", methods=["GET"])
 def get_all_tweets():
-    tweets = Tweet.query.all()
-    return jsonify([tweet.to_dict() for tweet in tweets]), 200
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
+
+    tweets = Tweet.query.paginate(page=page, per_page=per_page, error_out=False)
+
+    return jsonify({
+        "tweets": [tweet.to_dict() for tweet in tweets.items],
+        "total": tweets.total,
+        "pages": tweets.pages,
+        "current_page": tweets.page
+    }), 200
 
 @bp.route("/<int:tweet_id>", methods=["GET"])
 def get_tweet(tweet_id):
@@ -52,10 +61,11 @@ def like_tweet(tweet_id):
     user_id = data.get("user_id")
     if not user_id:
         return jsonify({"error": "Missing user_id"}), 400
-    if Like.query.filter_by(user_id=user_id, tweet_id=tweet_id).first():
+    existing_like = Like.query.filter_by(user_id=user_id, tweet_id=tweet_id).first()
+    if existing_like:
         return jsonify({"message": "Tweet already liked"}), 200
-    tweet = Tweet.query.get(tweet_id)
     new_like = Like(user_id=user_id, tweet_id=tweet_id, created_at=datetime.utcnow())
+    tweet = Tweet.query.get(tweet_id)
     tweet.likes_count += 1
     db.session.add(new_like)
     db.session.commit()

@@ -1,5 +1,7 @@
 from flask import Blueprint, jsonify, request
-from flask_twitter_clone.models import db, User
+from .models import db, User
+
+
 
 bp = Blueprint("users", __name__)
 

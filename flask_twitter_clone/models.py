@@ -35,8 +35,8 @@ class User(db.Model):
 class UserProfile(db.Model):
     __tablename__ = 'user_profiles'
     id = db.Column(db.Integer, primary_key=True)
-    bio = db.Column(db.String(255))
-    location = db.Column(db.String(100))
+    bio = db.Column(db.String(255), default="")
+    location = db.Column(db.String(100), default="")
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True)
     user = db.relationship("User", back_populates="profile")
 

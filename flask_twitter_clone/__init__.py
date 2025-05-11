@@ -12,7 +12,9 @@ from .tweets import bp as tweets_bp
 
 def create_app():
     app = Flask(__name__)
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///instance/twitter.db"
+    
+    # ✅ Save the SQLite database in the root of the project directory
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///twitter.db"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)
