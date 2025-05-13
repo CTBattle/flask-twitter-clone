@@ -19,4 +19,4 @@ with app.app_context():
     db.session.add_all([tweet1, tweet2])
     db.session.commit()
 
-    print("✅ Database seeded with initial data.")
+    print("Database seeded with initial data.")

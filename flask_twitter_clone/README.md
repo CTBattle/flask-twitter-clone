@@ -1,36 +1,49 @@
 # Flask Twitter Clone
 
-A simple but powerful REST API built with Flask that mimics core Twitter features like posting tweets, liking/unliking, and managing users.
+A lightweight Twitter-style REST API built with Flask, SQLAlchemy, and SQLite. This project demonstrates user accounts, tweet management, likes, search, pagination, and basic profiles — all built using best practices and deployed live on Railway.
 
-## 🔧 Features
-- ✅ User registration and management
-- 📝 Tweet creation, editing, and deletion
-- ❤️ Like and unlike tweets
-- 🔍 Search tweets by content
-- 📊 Tweet statistics (avg likes, max views)
-- 📁 SQLite database integration
-- 🧩 Modular RESTful API architecture
+---
 
-## 🧰 Tech Stack
-- Python 3.11
-- Flask
-- SQLAlchemy & Flask-Migrate
-- Flask-CORS
-- SQLite
+## Live Demo
 
-## 🚀 Setup Instructions
-1. Clone this repository
-2. Install dependencies: `pip install -r flask_twitter_clone/requirements.txt`
-3. Run migrations: `flask --app flask_twitter_clone db upgrade`
-4. Seed the database: `./seed.sh`
-5. Start the server: `./run.sh`
-6. Open [http://localhost:5000](http://localhost:5000)
+Deployed App: https://flask-twitter-clone-production-<your-id>.up.railway.app
 
-## 📌 Future Improvements
-- 🔐 JWT authentication
-- 📄 Pagination for tweets
-- 👤 User profile bios
-- 🧪 Unit testing and validation
+---
 
-## 📜 License
-MIT License — free to use and extend.
+## Screenshots
+
+Coming soon — add Postman screenshots or live endpoint results.
+
+---
+
+## Features
+
+### User Endpoints
+- Create, update, delete, and fetch users
+- View user profile info (bio and location)
+
+### Tweet Endpoints
+- Post, edit, delete, and fetch tweets
+- Search tweets by keyword
+- Paginate tweets for scalable performance
+
+### Likes
+- Like and unlike tweets
+- View tweet stats: average likes, max views
+
+---
+
+## Technologies Used
+
+- Backend: Python 3.11, Flask
+- ORM: SQLAlchemy
+- Migrations: Flask-Migrate
+- Database: SQLite (local), Railway (cloud deployment)
+- API Testing: Postman
+- Version Control: Git and GitHub
+- Deployment: Railway
+
+---
+
+## Project Structure
+
