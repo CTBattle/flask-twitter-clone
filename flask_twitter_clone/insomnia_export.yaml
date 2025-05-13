@@ -1,0 +1,241 @@
+type: collection.insomnia.rest/5.0
+name: twitter API
+meta:
+  id: wrk_6f3af9f98f5a4645be5429a80bd91f7e
+  created: 1746239987704
+  modified: 1746317177061
+collection:
+  - name: The_tweets
+    meta:
+      id: fld_80ced14c100d454fbf06a5f2b008cf14
+      created: 1746321698873
+      modified: 1746322947720
+      sortKey: -1746321698873
+    children:
+      - url: http://localhost:3000/tweets
+        name: tweets_index
+        meta:
+          id: req_c6ae98a4f92440b6889b4b0700655ae3
+          created: 1746322266288
+          modified: 1746322315911
+          isPrivate: false
+          sortKey: -1746322309693
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/tweets
+        name: tweets_create
+        meta:
+          id: req_68c4fe9cafc44d24845d50d88740f4fc
+          created: 1746322309593
+          modified: 1746322799681
+          isPrivate: false
+          sortKey: -1746322309593
+        method: POST
+        body:
+          mimeType: application/json
+          text: |
+            {
+              "user_id": 1,
+              "content": "Hello from Insomnia!"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/tweets/1
+        name: Tweets_delete
+        meta:
+          id: req_029cf25c12c14910a2e2b6bd73ac0a9c
+          created: 1746322878455
+          modified: 1746322931772
+          isPrivate: false
+          sortKey: -1746322309493
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/tweets/1
+        name: Tweets_likeing_users
+        meta:
+          id: req_366b08a389944c10adf679a2fa0fcb7d
+          created: 1746322950530
+          modified: 1746322983989
+          isPrivate: false
+          sortKey: -1746322950530
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: The_users
+    meta:
+      id: fld_02a6a2de1b4c4c688c90d71ddc601c95
+      created: 1746321708417
+      modified: 1746322227070
+      sortKey: -1746321708417
+    children:
+      - url: http://localhost:3000/users
+        name: users_index
+        meta:
+          id: req_40756660295f495496beecc5ae1da084
+          created: 1746321754517
+          modified: 1746321804104
+          isPrivate: false
+          sortKey: -1746321754517
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/users/1
+        name: users_show
+        meta:
+          id: req_85d4ff5cbd604f80b02a08c83bfe1520
+          created: 1746321851870
+          modified: 1746321886532
+          isPrivate: false
+          sortKey: -1746321754417
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/users
+        name: users_create
+        meta:
+          id: req_08aebe15417b44d79c417318f69abf5b
+          created: 1746321926041
+          modified: 1746322038793
+          isPrivate: false
+          sortKey: -1746321754317
+        method: POST
+        body:
+          mimeType: application/json
+          text: |
+            {
+              "username": "charles",
+              "password": "strongpass123"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/users/1
+        name: users_update
+        meta:
+          id: req_bbd94577da9041729d287f038b11b878
+          created: 1746322063188
+          modified: 1746322111483
+          isPrivate: false
+          sortKey: -1746321754217
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |
+            {
+              "username": "newcharles",
+              "password": "newstrongpass123"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/users/1
+        name: users_delete
+        meta:
+          id: req_6ce3e1a05a5446a1b2283daddcb1c4d9
+          created: 1746322137099
+          modified: 1746322179868
+          isPrivate: false
+          sortKey: -1746321754117
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_1b97895c891826d50fbcb1bb18246f248cb7b2ef
+    created: 1746239987707
+    modified: 1746239987707
+environments:
+  name: Base Environment
+  meta:
+    id: env_1b97895c891826d50fbcb1bb18246f248cb7b2ef
+    created: 1746239987706
+    modified: 1746239987706
+    isPrivate: false
