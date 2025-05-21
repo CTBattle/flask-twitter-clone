@@ -12,6 +12,7 @@ email_validator==2.2.0
 fastapi==0.115.12
 Flask==3.1.0
 flask-cors==5.0.1
+Flask-JWT-Extended==4.7.1
 Flask-Migrate==4.1.0
 Flask-SQLAlchemy==3.1.1
 h11==0.16.0
@@ -28,6 +29,7 @@ openai==1.76.0
 psycopg2-binary==2.9.10
 pydantic==2.11.3
 pydantic_core==2.33.1
+PyJWT==2.10.1
 python-dotenv==1.1.0
 PyYAML==6.0.2
 requests==2.32.3
