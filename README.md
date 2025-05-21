@@ -21,7 +21,7 @@ This is a full-featured backend for a Twitter-style app built using **Flask**, *
 - Docker & Docker Compose
 - GitHub + Render (or Railway)
 
-##� API Endpoints
+## API Endpoints
 
 | Feature          | Method | Endpoint                  | Body (JSON) |
 |------------------|--------|---------------------------|-------------|
@@ -41,19 +41,15 @@ This is a full-featured backend for a Twitter-style app built using **Flask**, *
    ```bash
    git clone https://github.com/CTBattle/flask-twitter-clone.git
    cd flask-twitter-clone
-
---
-
+```
 DATABASE_URL=postgresql://postgres:password@db:5432/twitter_clone_db
-
---
-
+```
+```
 docker-compose up --build
-
---
-
+```
+```
 docker exec -it flask_container flask db upgrade
-
+```
 --
 
 Cloud (Render / Railway)
