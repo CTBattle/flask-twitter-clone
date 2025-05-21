@@ -29,21 +29,24 @@ def login():
     username = data.get("username")
     password = data.get("password")
 
-    print("🔐 Login attempt for:", username)
+    print("🔐 Login attempt:", username, password)  # Debug line
 
     if not username or not password:
         return jsonify({"error": "Missing username or password"}), 400
 
     user = User.query.filter_by(username=username).first()
-    print("👤 User found:", bool(user))
+    print("👤 Found user:", user)
 
     if not user:
-        return jsonify({"error": "Invalid credentials"}), 401
+        return jsonify({"error": "User not found"}), 404
 
-    print("🔑 User password hash:", user.password_hash)
+    if not user.password_hash:
+        return jsonify({"error": "No password hash set"}), 500
 
-    if not user.password_hash or not user.check_password(password):
+    if not user.check_password(password):
         return jsonify({"error": "Invalid credentials"}), 401
 
     access_token = create_access_token(identity=user.id)
+    print("✅ Token created")
     return jsonify(access_token=access_token), 200
+
