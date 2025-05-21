@@ -3,16 +3,16 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Virtual environment
+# Virtual environments
 .venv/
 env/
 ENV/
 venv/
 pip-wheel-metadata/
 
-# SQLite database
-instance/
+# Flask SQLite (if used during testing)
 *.db
+instance/
 
 # Flask instance folder
 instance/
@@ -26,5 +26,20 @@ instance/
 # Mac system files
 .DS_Store
 
-# Migrations
+# Flask-Migrate folder
 migrations/
+
+# Docker
+*.log
+*.pid
+*.sock
+*.pid.lock
+
+# Pytest cache
+.pytest_cache/
+
+# MyPy / coverage / testing cache
+.mypy_cache/
+coverage.xml
+htmlcov/
+.cache/
