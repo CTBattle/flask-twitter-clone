@@ -17,7 +17,7 @@ def register():
         return jsonify({"error": "Username already exists"}), 400
 
     new_user = User(username=username)
-    new_user.set_password(password)  # Make sure this method is defined
+    new_user.set_password(password)
     db.session.add(new_user)
     db.session.commit()
 
@@ -29,15 +29,21 @@ def login():
     username = data.get("username")
     password = data.get("password")
 
+    print("🔐 Login attempt for:", username)
+
     if not username or not password:
         return jsonify({"error": "Missing username or password"}), 400
 
     user = User.query.filter_by(username=username).first()
+    print("👤 User found:", bool(user))
 
-    # ✅ Fix: Prevent error if user has no password_hash set
-    if not user or not user.password_hash or not user.check_password(password):
+    if not user:
+        return jsonify({"error": "Invalid credentials"}), 401
+
+    print("🔑 User password hash:", user.password_hash)
+
+    if not user.password_hash or not user.check_password(password):
         return jsonify({"error": "Invalid credentials"}), 401
 
     access_token = create_access_token(identity=user.id)
     return jsonify(access_token=access_token), 200
-
