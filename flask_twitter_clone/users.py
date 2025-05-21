@@ -8,14 +8,17 @@ users_bp = Blueprint("users", __name__, url_prefix="/users")
 def create_user():
     data = request.get_json()
     username = data.get("username")
+    password = data.get("password")  # ⬅️ NEW: Accept password
 
-    if not username:
-        return jsonify({"error": "Username is required"}), 400
+    if not username or not password:
+        return jsonify({"error": "Username and password are required"}), 400
 
     if User.query.filter_by(username=username).first():
         return jsonify({"error": "Username already exists"}), 400
 
     user = User(username=username)
+    user.set_password(password)  # ⬅️ NEW: Hash password
+
     user.profile = UserProfile(bio="", location="")
 
     db.session.add(user)
