@@ -1,91 +1,76 @@
-# Flask Twitter Clone
+/Users/charlesbattle/Desktop/NucampFolder/Python/2-SQL/week4/README.md
 
-A lightweight Twitter-style REST API built with Flask, SQLAlchemy, and SQLite. This project demonstrates user accounts, tweet management, likes, search, pagination, and basic profiles — all built using best practices and deployed live on Railway.
+# Flask Twitter Clone – Honors Project
 
----
-
-## Live Demo
-
-Deployed App: https://flask-twitter-clone-production-<your-id>.up.railway.app
-
----
-
-## Screenshots
-
-Coming soon — add Postman screenshots or live endpoint results.
-
----
+This is a full-featured backend for a Twitter-style app built using **Flask**, **PostgreSQL**, and **Docker Compose**. Developed as an Honors Portfolio Project for Nucamp's backend course.
 
 ## Features
+- User registration and hashed password storage
+- User authentication
+- Posting and viewing tweets
+- Liking tweets
+- Viewing profiles with bio/location
+- Tracks tweet views
+- RESTful API with clean endpoints
 
-### User Endpoints
-- Create, update, delete, and fetch users
-- View user profile info (bio and location)
+## Technologies
+- Python 3.12
+- Flask 3.1.0
+- SQLAlchemy & Flask-Migrate
+- PostgreSQL
+- Docker & Docker Compose
+- GitHub + Render (or Railway)
 
-### Tweet Endpoints
-- Post, edit, delete, and fetch tweets
-- Search tweets by keyword
-- Paginate tweets for scalable performance
+##� API Endpoints
 
-### Likes
-- Like and unlike tweets
-- View tweet stats: average likes, max views
-
----
-
-## Technologies Used
-
-- Backend: Python 3.11, Flask
-- ORM: SQLAlchemy
-- Migrations: Flask-Migrate
-- Database: SQLite (local), Railway (cloud deployment)
-- API Testing: Postman
-- Version Control: Git and GitHub
-- Deployment: Railway
-
----
-## Project Structure
-
-```
-flask_twitter_clone/
-├── __init__.py
-├── models.py
-├── users.py
-├── tweets.py
-├── run.sh
-├── requirements.txt
-├── Procfile
-└── migrations/
-```
----
+| Feature          | Method | Endpoint                  | Body (JSON) |
+|------------------|--------|---------------------------|-------------|
+| Create user      | POST   | `/users`                  | `{ "username", "email", "password" }` |
+| Get users        | GET    | `/users` or `/users/<id>` | —           |
+| Create tweet     | POST   | `/tweets`                 | `{ "content", "user_id" }` |
+| View tweets      | GET    | `/tweets` or `/tweets/<id>` | —         |
+| Like a tweet     | POST   | `/likes`                  | `{ "user_id", "tweet_id" }` |
+| View tweet likes | GET    | `/tweets/<id>/likes`      | —           |
+| View profile     | GET    | `/profiles/<user_id>`     | —           |
+| Update profile   | PATCH  | `/profiles/<user_id>`     | `{ "bio", "location" }` |
 
 ## Setup Instructions
 
-1. Clone the repo
-```bash
-git clone https://github.com/CTBattle/flask-twitter-clone.git
-cd flask-twitter-clone
-```
+### Local
+1. Clone the repo:
+   ```bash
+   git clone https://github.com/CTBattle/flask-twitter-clone.git
+   cd flask-twitter-clone
 
-2. Create and activate a virtual environment
-```bash
-python -m venv venv
-source venv/bin/activate  # macOS/Linux
-venv\Scripts\activate     # Windows
-```
+--
 
-3. Install dependencies
-```bash
-pip install -r requirements.txt
-```
+DATABASE_URL=postgresql://postgres:password@db:5432/twitter_clone_db
 
-4. Run the app
-```bash
-chmod +x run.sh
-./run.sh
-```
+--
 
-5. Test in browser or Postman
-```bash
-Example: http://localhost:5000/users
-```
+docker-compose up --build
+
+--
+
+docker exec -it flask_container flask db upgrade
+
+--
+
+Cloud (Render / Railway)
+Dockerfile and docker-compose.yml included
+Flask runs on port 5000
+Database runs in its own container
+Folder Structure
+
+/flask_twitter_clone
+├── __init__.py
+├── models.py
+├── routes.py
+└── ...
+
+--
+
+Author
+Charles Battle — GitHub
+
+Update README with project overview and instructions
