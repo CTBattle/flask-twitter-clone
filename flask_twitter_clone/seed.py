@@ -1,4 +1,4 @@
-from flask_twitter_clone.app import create_app
+from flask_twitter_clone.wsgi import create_app
 from flask_twitter_clone.models import db, User, Tweet
 
 app = create_app()

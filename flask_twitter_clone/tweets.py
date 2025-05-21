@@ -1,115 +1,99 @@
 from flask import Blueprint, request, jsonify
-from .models import db, Tweet, Like, User
-from datetime import datetime
-from sqlalchemy import func
+from flask_twitter_clone.models import db, Tweet, User, Like
 
-bp = Blueprint("tweets", __name__)
+tweets_bp = Blueprint("tweets", __name__, url_prefix="/tweets")
 
-@bp.route("/", methods=["GET"])
-def get_all_tweets():
-    page = request.args.get("page", 1, type=int)
-    per_page = request.args.get("per_page", 10, type=int)
-
-    tweets = Tweet.query.paginate(page=page, per_page=per_page, error_out=False)
-
-    return jsonify({
-        "tweets": [tweet.to_dict() for tweet in tweets.items],
-        "total": tweets.total,
-        "pages": tweets.pages,
-        "current_page": tweets.page
-    }), 200
-
-@bp.route("/<int:tweet_id>", methods=["GET"])
-def get_tweet(tweet_id):
-    tweet = Tweet.query.get(tweet_id)
-    if not tweet:
-        return jsonify({"error": "Tweet not found"}), 404
-    return jsonify(tweet.to_dict()), 200
-
-@bp.route("/", methods=["POST"])
+# Create tweet
+@tweets_bp.route("/", methods=["POST"])
 def create_tweet():
     data = request.get_json()
-    if not data or "content" not in data or "user_id" not in data:
-        return jsonify({"error": "Missing required fields"}), 400
-    new_tweet = Tweet(content=data["content"], user_id=data["user_id"])
-    db.session.add(new_tweet)
-    db.session.commit()
-    return jsonify(new_tweet.to_dict()), 201
+    content = data.get("content")
+    user_id = data.get("user_id")
 
-@bp.route("/<int:tweet_id>", methods=["PUT"])
-def update_tweet(tweet_id):
-    tweet = Tweet.query.get(tweet_id)
-    if not tweet:
-        return jsonify({"error": "Tweet not found"}), 404
-    data = request.get_json()
-    tweet.content = data.get("content", tweet.content)
+    if not content or not user_id:
+        return jsonify({"error": "Missing content or user_id"}), 400
+
+    user = User.query.get_or_404(user_id)
+    tweet = Tweet(content=content, author=user)
+
+    db.session.add(tweet)
+    db.session.commit()
+
+    return jsonify(tweet.to_dict()), 201
+
+# List paginated tweets
+@tweets_bp.route("/", methods=["GET"])
+def list_tweets():
+    page = request.args.get("page", 1, type=int)
+    limit = request.args.get("limit", 10, type=int)
+
+    tweets = Tweet.query.order_by(Tweet.created_at.desc()).paginate(page=page, per_page=limit, error_out=False)
+    return jsonify({
+        "tweets": [t.to_dict() for t in tweets.items],
+        "total": tweets.total,
+        "page": tweets.page,
+        "pages": tweets.pages
+    }), 200
+
+# View a single tweet and increment view count
+@tweets_bp.route("/<int:tweet_id>", methods=["GET"])
+def get_tweet(tweet_id):
+    tweet = Tweet.query.get_or_404(tweet_id)
+    tweet.views += 1
     db.session.commit()
     return jsonify(tweet.to_dict()), 200
 
-@bp.route("/<int:tweet_id>", methods=["DELETE"])
-def delete_tweet(tweet_id):
-    tweet = Tweet.query.get(tweet_id)
-    if not tweet:
-        return jsonify({"error": "Tweet not found"}), 404
-    db.session.delete(tweet)
-    db.session.commit()
-    return jsonify({"message": "Tweet deleted"}), 200
+# Search tweets
+@tweets_bp.route("/search", methods=["GET"])
+def search_tweets():
+    query = request.args.get("query", "")
+    if not query:
+        return jsonify({"error": "Query parameter required"}), 400
 
-@bp.route("/<int:tweet_id>/like", methods=["POST"])
+    tweets = Tweet.query.filter(Tweet.content.ilike(f"%{query}%")).all()
+    return jsonify([t.to_dict() for t in tweets]), 200
+
+# List top tweets by likes + views
+@tweets_bp.route("/top", methods=["GET"])
+def top_tweets():
+    tweets = Tweet.query.order_by(Tweet.likes_count.desc(), Tweet.views.desc()).limit(10).all()
+    return jsonify([t.to_dict() for t in tweets]), 200
+
+# Like a tweet
+@tweets_bp.route("/<int:tweet_id>/like", methods=["POST"])
 def like_tweet(tweet_id):
     data = request.get_json()
     user_id = data.get("user_id")
-    if not user_id:
-        return jsonify({"error": "Missing user_id"}), 400
-    existing_like = Like.query.filter_by(user_id=user_id, tweet_id=tweet_id).first()
-    if existing_like:
-        return jsonify({"message": "Tweet already liked"}), 200
-    new_like = Like(user_id=user_id, tweet_id=tweet_id, created_at=datetime.utcnow())
-    tweet = Tweet.query.get(tweet_id)
-    tweet.likes_count += 1
-    db.session.add(new_like)
-    db.session.commit()
-    return jsonify({"message": "Tweet liked"}), 201
 
-@bp.route("/<int:tweet_id>/unlike", methods=["POST"])
+    tweet = Tweet.query.get_or_404(tweet_id)
+    user = User.query.get_or_404(user_id)
+
+    existing_like = Like.query.filter_by(user_id=user.id, tweet_id=tweet.id).first()
+    if existing_like:
+        return jsonify({"message": "Already liked"}), 200
+
+    like = Like(user_id=user.id, tweet_id=tweet.id)
+    db.session.add(like)
+    tweet.likes_count += 1
+    db.session.commit()
+
+    return jsonify({"message": "Liked"}), 200
+
+# Unlike a tweet
+@tweets_bp.route("/<int:tweet_id>/like", methods=["DELETE"])
 def unlike_tweet(tweet_id):
     data = request.get_json()
     user_id = data.get("user_id")
-    if not user_id:
-        return jsonify({"error": "Missing user_id"}), 400
-    like = Like.query.filter_by(user_id=user_id, tweet_id=tweet_id).first()
+
+    tweet = Tweet.query.get_or_404(tweet_id)
+    user = User.query.get_or_404(user_id)
+
+    like = Like.query.filter_by(user_id=user.id, tweet_id=tweet.id).first()
     if not like:
-        return jsonify({"message": "Like not found"}), 404
-    tweet = Tweet.query.get(tweet_id)
-    if tweet.likes_count > 0:
-        tweet.likes_count -= 1
+        return jsonify({"message": "Not liked"}), 200
+
     db.session.delete(like)
+    tweet.likes_count = max(tweet.likes_count - 1, 0)
     db.session.commit()
-    return jsonify({"message": "Tweet unliked"}), 200
 
-@bp.route("/<int:tweet_id>/liked", methods=["GET"])
-def check_if_liked(tweet_id):
-    user_id = request.args.get("user_id")
-    if not user_id:
-        return jsonify({"error": "Missing user_id"}), 400
-    like = Like.query.filter_by(user_id=user_id, tweet_id=tweet_id).first()
-    return jsonify({"liked": bool(like)}), 200
-
-@bp.route("/search", methods=["GET"])
-def search_tweets():
-    keyword = request.args.get("q", "")
-    if not keyword:
-        return jsonify({"error": "Missing search query"}), 400
-    results = Tweet.query.filter(Tweet.content.ilike(f"%{keyword}%")).all()
-    return jsonify([tweet.to_dict() for tweet in results]), 200
-
-@bp.route("/stats", methods=["GET"])
-def tweet_stats():
-    avg_likes = db.session.query(func.avg(Tweet.likes_count)).scalar()
-    max_views = db.session.query(func.max(Tweet.views)).scalar()
-    return jsonify({
-        "average_likes": round(avg_likes or 0, 2),
-        "max_views": max_views or 0
-    }), 200
-
-tweets_bp = bp
+    return jsonify({"message": "Unliked"}), 200

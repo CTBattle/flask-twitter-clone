@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Create the instance folder if it doesn't exist (for SQLite DB)
+# Ensure instance folder exists
 mkdir -p flask_twitter_clone/instance
 
-# Set environment variables
+# Set env variables
 export PYTHONPATH=.
 export FLASK_APP=flask_twitter_clone
 
-# Use Railway's injected port and bind to 0.0.0.0
+# Run the app on Railway-compatible port
 flask run --host=0.0.0.0 --port=8080

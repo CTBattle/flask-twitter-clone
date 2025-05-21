@@ -1,52 +1,59 @@
-from flask import Blueprint, jsonify, request
-from .models import db, User
+from flask import Blueprint, request, jsonify
+from flask_twitter_clone.models import db, User, UserProfile
 
 users_bp = Blueprint("users", __name__, url_prefix="/users")
 
-@users_bp.route("/", methods=["GET"])
-def get_all_users():
-    users = User.query.all()
-    return jsonify([user.to_dict() for user in users]), 200
-
-@users_bp.route("/<int:user_id>", methods=["GET"])
-def get_user(user_id):
-    user = User.query.get(user_id)
-    if not user:
-        return jsonify({"error": "User not found"}), 404
-    return jsonify(user.to_dict()), 200
-
+# Create new user and auto-create profile
 @users_bp.route("/", methods=["POST"])
 def create_user():
     data = request.get_json()
-    if not data or "username" not in data or "password" not in data:
-        return jsonify({"error": "Missing required fields"}), 400
+    username = data.get("username")
 
-    if User.query.filter_by(username=data["username"]).first():
-        return jsonify({"error": "Username already taken"}), 409
+    if not username:
+        return jsonify({"error": "Username is required"}), 400
 
-    new_user = User(username=data["username"], password=data["password"])
-    db.session.add(new_user)
+    if User.query.filter_by(username=username).first():
+        return jsonify({"error": "Username already exists"}), 400
+
+    user = User(username=username)
+    user.profile = UserProfile(bio="", location="")
+
+    db.session.add(user)
     db.session.commit()
-    return jsonify(new_user.to_dict()), 201
 
-@users_bp.route("/<int:user_id>", methods=["PUT"])
-def update_user(user_id):
-    user = User.query.get(user_id)
-    if not user:
-        return jsonify({"error": "User not found"}), 404
+    return jsonify(user.to_dict()), 201
 
-    data = request.get_json()
-    user.username = data.get("username", user.username)
-    user.password = data.get("password", user.password)
-    db.session.commit()
+# List all users
+@users_bp.route("/", methods=["GET"])
+def list_users():
+    users = User.query.all()
+    return jsonify([u.to_dict() for u in users]), 200
+
+# Get one user
+@users_bp.route("/<int:user_id>", methods=["GET"])
+def get_user(user_id):
+    user = User.query.get_or_404(user_id)
     return jsonify(user.to_dict()), 200
 
-@users_bp.route("/<int:user_id>", methods=["DELETE"])
-def delete_user(user_id):
-    user = User.query.get(user_id)
-    if not user:
-        return jsonify({"error": "User not found"}), 404
+# Get user profile
+@users_bp.route("/<int:user_id>/profile", methods=["GET"])
+def get_profile(user_id):
+    user = User.query.get_or_404(user_id)
+    if not user.profile:
+        return jsonify({"error": "Profile not found"}), 404
+    return jsonify(user.profile.to_dict()), 200
 
-    db.session.delete(user)
+# Update user profile
+@users_bp.route("/<int:user_id>/profile", methods=["PATCH"])
+def update_profile(user_id):
+    user = User.query.get_or_404(user_id)
+    data = request.get_json()
+
+    if not user.profile:
+        return jsonify({"error": "Profile not found"}), 404
+
+    user.profile.bio = data.get("bio", user.profile.bio)
+    user.profile.location = data.get("location", user.profile.location)
+
     db.session.commit()
-    return jsonify({"message": "User deleted"}), 200
+    return jsonify(user.profile.to_dict()), 200
